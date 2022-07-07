@@ -54,9 +54,10 @@ const createUser = async function (req, res) {
         return res.status(400).send({ status: false, msg: 'You Can enter Only [Mr, Mrs, Miss] in Title in this format ' });
     }
     // check name is valid name or not?  (for this we used regular expression is here) 
-    var regName = /^[a-zA-Z]+$/;
-    if (!regName.test(name)) {
-        return res.status(400).send({ status: false, msg: "name is invalid" });
+    var nameRegex=/^[a-zA-Z ]{2,10}$/
+
+    if (!nameRegex.test(name)) {
+        return res.status(400).send({ status: false, msg: "name shold be more then 1 character " });
     }
     // check mobile no valid or not
     if (!isValid(phone)) return res.status(400).send({ status: false, message: "users's phone no is required." })
@@ -81,9 +82,9 @@ const createUser = async function (req, res) {
         return res.status(400).send({ status: false, msg: "E-mail is Already Present in DB" })
     }
     //check if password is valid or not ?
-    var passwordReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,15}$/;
+    var passwordReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
     if (!passwordReg.test(password)) {
-        return res.status(400).send({ status: false, msg: "pass is invalid(Minimum 6 and maximum 15 characters, at least one uppercase letter, one lowercase letter, one number and one special character Ex. Abc@123,abC%98,@abD34,1999$Sour" });
+        return res.status(400).send({ status: false, msg: "pass is invalid(Minimum 8 and maximum 15 characters, at least one uppercase letter, one lowercase letter, one number and one special character Ex. Abc@123,abC%98,@abD34,1999$Sour" });
     } 
     // if all condition are passed create user data
     let data = await userModel.create(userData)
