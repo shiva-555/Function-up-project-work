@@ -137,7 +137,7 @@ const getBook = async function (req, res) {
 
     //  return the data if isDeleted false 
 
-    let data = await bookModel.find().sort({isDeleted:false})
+    let data = await bookModel.find({isDeleted:false}).sort({title:1})
     if (data.length !=0) return res.status(200).send({status:true , data:data})
 
     return res.status(404).send({status:false, msg: " no document are found"})
