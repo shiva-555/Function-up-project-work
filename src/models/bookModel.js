@@ -1,64 +1,60 @@
 /***********************************REQUIRE MONGOOSE LIBARARY*********************************/
 const mongoose = require("mongoose");
-const ObjectId=mongoose.Schema.Types.ObjectId
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 const bookSchema = new mongoose.Schema(
-{
- title: {
-        type: String,
-        required:true,
-        enum: ["Mr", "Mrs", "Miss"],
-        unique:true
+  {
+    title: {
+      type: String,
+      required: true,
+      unique: true
     },
-    excerpt:{
-        type:String,
-        required:true,
+    excerpt: {
+      type: String,
+      required: true,
     },
-    userId:{
-        type:ObjectId,
-        ref:"User",
-        required:true
+    userId: {
+      type: ObjectId,
+      ref: "User",
+      required: true
     },
     ISBN: {
       type: String,
-      required:true,
+      required: true,
       trim: true,
-      unique:true
+      unique: true
     },
     category: {
       type: String,
-      required:true,
-    trim: true,
+      required: true,
+      trim: true,
     },
     subcategory: {
       type: String,
-      required:true,
+      required: true,
       trim: true,
     },
-     password: {
-      type: String,
-      trim: true,
-      required:true,
-    },
+    // password: {
+    //   type: String,
+    //   trim: true,
+    //   required: true,
+    // },
     reviews: {
-        type: Number,
-        trim: true,
-        default:0,
-        comment:{
-            type:String
-        },
-      },
-      deletedAt:{
-        type:Date
-      },
-      isDeleted:{
-        type:boolean,
-        default:false,
-      },
-      releasedAt:{
-        type:Date,
-        required:true
-      },
+      type: Number,
+      trim: true,
+      default: 0
+    },
+    deletedAt: {
+      type: Date
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    releasedAt: {
+      type: Date,
+      required: true
+    },
   }, { timestamps: true });
 
 /************************************CONNECTION CREATED***************************************/
