@@ -143,6 +143,31 @@ const getBook = async function (req, res) {
 }
 
 
+
+/*********************************************[GET BOOK BY ID IN PATH PARAM]*****************************************************/
+const getBookById = async function (req, res) {
+    try {
+
+        let book_id = req.params.bookId
+
+        if (!isValidObjectId(book_id)) return res.status(400).send({ status: false, message: "Invalid bookId." })
+
+        let checkBook = await bookModel.findOne({ _id:book_id, isDeleted: false })
+
+        if (!checkBook) return res.status(400).send({ status: false, message: "BookId Not Found" })
+
+        const getReviewsData = await reviewModel.find({ bookId: checkBook._id, isDeleted: false })
+            .select({ deletedAt: 0, isDeleted: 0, createdAt: 0, __v: 0, updatedAt: 0 })
+
+        checkBook.reviewsData = getReviewsData
+
+        res.status(200).send({ status: true, message: "Book List", data: checkBook })
+
+    } catch (err) {
+        res.status(500).send({ status: false, error: err.message })
+    }
+}
+
 // ******************************************UPDATE BOOK***********************************************
 
 
@@ -283,5 +308,6 @@ const deletedBook = async function (req, res) {
 
 module.exports.createBook = createBook
 module.exports.getBook = getBook
+module.exports.getBookById=getBookById
 module.exports.updateBookById = updateBookById
 module.exports.deletedBook = deletedBook
