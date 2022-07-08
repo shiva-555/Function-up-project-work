@@ -13,7 +13,10 @@ router.get("/books",bookController.getBook)
 // router.get("/books/:bookId", bookController.getBookById)
 router.put("/books/:bookId", bookController.updateBookById)
 router.delete("/books/:bookId", bookController.deletedBook)
-router.post("/books/:bookId/review", reviewController.createReview)
 
+// ************REVIWS API*******************************
+
+router.post("/books/:bookId/review", reviewController.createReview)
+router.put("/books/:bookId/review/:reviewId", reviewController.createReview)
 
 module.exports=router

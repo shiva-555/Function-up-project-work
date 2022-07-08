@@ -41,7 +41,7 @@ const createBook = async function (req, res) {
         if (!reviews) {
             return res.status(400).send({ status: false, msg: "Please Enter the reviews" });
 
-        } 
+        }
         //check if isDeleted is TRUE/FALSE ?
         if (isDeleted && (!(typeof isDeleted === "boolean"))) {
             return res.status(400).send({ status: false, msg: "isDeleted Must be TRUE OR FALSE" });
@@ -77,7 +77,7 @@ const createBook = async function (req, res) {
         if (!user) return res.status(404).send({ status: false, msg: "This Id is not present in user DB" })
 
 
-        
+
         //check the author Id is Valid or Not ?
         if (!ObjectId.isValid(userId)) {
             return res.status(400).send({ status: false, msg: "Id is Invalid" });
@@ -159,15 +159,13 @@ const updateBookById = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Please Enter the Data in Request Body" });
         }
 
-        if (!title){
-            return res.status(400).send({ status: false, msg: "Please Enter the title " });  
+        if (!title) {
+            return res.status(400).send({ status: false, msg: "Please Enter the title " });
         }
 
-        if (!excerpt){
-            return res.status(400).send({ status: false, msg: "Please Enter the excerpt " });  
+        if (!excerpt) {
+            return res.status(400).send({ status: false, msg: "Please Enter the excerpt " });
         }
-
-
         //check the book Id is Valid or Not ?  
         if (!ObjectId.isValid(bookId)) {
             return res.status(400).send({ status: false, msg: "bookId is Invalid" });
@@ -193,22 +191,16 @@ const updateBookById = async function (req, res) {
             return res.status(400).send({ status: false, msg: "title is Already Present in DB" })
         }
 
-        //check the eixcerpt unique or not 
-        // let findExcerpt = await bookModel.findOne({ excerpt: excerpt })
-        // if (findExcerpt) {
-        //     return res.status(400).send({ status: false, msg: "excerpt is Already Present in DB" })
-        // }
-
-
         //check the ISBN unique or not 
         let findISBN = await bookModel.findOne({ ISBN: ISBN })
         if (findISBN) {
             return res.status(400).send({ status: false, msg: "ISBN is Already Present in DB" })
         }
 
-        if(!ISBN) {
+        if (!ISBN) {
             return res.status(400).send({ status: false, msg: "Please provide ISBN" });
         }
+
 
         // check if isDeleated Status is True
         if (books.isDeleted) return res.status(404).send({ status: false, msg: "book is Already Deleted" })
@@ -245,9 +237,7 @@ const updateBookById = async function (req, res) {
             return res.status(400).send({ status: false, msg: "ISBN text is invalid" });
         }
 
-
-
-        delete data.subcategory
+        // delete data.subcategory
 
         let updateData = await bookModel.findByIdAndUpdate(bookId, { $set: data }, { new: true })
 
