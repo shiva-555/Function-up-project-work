@@ -3,7 +3,6 @@ const userModel = require("../models/userModel")
 const jwt = require("jsonwebtoken")
 const ObjectId = require('mongoose').Types.ObjectId;
 
-const isValidObjectId = function (objectId) { return mongoose.Types.ObjectId.isValid(objectId) }
 
 const createBook = async function (req, res) {
     try {
@@ -42,7 +41,8 @@ const createBook = async function (req, res) {
         if (!reviews) {
             return res.status(400).send({ status: false, msg: "Please Enter the reviews" });
 
-        } //check if isDeleted is TRUE/FALSE ?
+        } 
+        //check if isDeleted is TRUE/FALSE ?
         if (isDeleted && (!(typeof isDeleted === "boolean"))) {
             return res.status(400).send({ status: false, msg: "isDeleted Must be TRUE OR FALSE" });
         }
@@ -168,7 +168,7 @@ const updateBookById = async function (req, res) {
         }
 
 
-        //check the author Id is Valid or Not ?  
+        //check the book Id is Valid or Not ?  
         if (!ObjectId.isValid(bookId)) {
             return res.status(400).send({ status: false, msg: "bookId is Invalid" });
         }
