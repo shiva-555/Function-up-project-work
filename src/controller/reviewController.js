@@ -24,14 +24,10 @@ const createReview = async function (req, res) {
         if (!reviewedBy) {
             return res.status(400).send({ status: false, msg: "please provide reviewedBy  " })
         }
-<<<<<<< HEAD
-        
-=======
         // check reviewedAt is present or not
         if (!reviewedAt) {
             return res.status(400).send({ status: false, msg: "please provide reviewedAt  " })
         }
->>>>>>> 6c981a34bdbe18466c8fb9a2178ca1014f81fdb5
         // check rating is present or not
         if (!rating) {
             return res.status(400).send({ status: false, msg: "please provide rating " })
@@ -53,17 +49,10 @@ const createReview = async function (req, res) {
         }
 
         // check bookId present or not
-<<<<<<< HEAD
-        // let findBooks = await bookModel.findById(bookId)
-        // if (findBooks) {
-        //     return res.status(400).send({ status: false, msg: "bookId is Already Present in DB" })
-        // }
-=======
         let findBooks = await bookModel.findById(bookId)
         if (findBooks) {
             return res.status(400).send({ status: false, msg: "bookId is Already Present in DB" })
         }
->>>>>>> 6c981a34bdbe18466c8fb9a2178ca1014f81fdb5
 
         // check bookId valid or not
         let findBook = await bookModel.findById(bookId)
@@ -80,11 +69,7 @@ const createReview = async function (req, res) {
         // if all condition are passed then data will be create
         if (Object.keys(reviewsData.length != 0)) {
             const data = await reviewModel.create(reviewsData)
-<<<<<<< HEAD
-            return res.status(201).send({ status: true, msg: "Create successfully", data: data }), { $inc: { review: 1 } }
-=======
             return res.status(201).send({ status: true, msg: "Create successfully", data: data }), { $inc: { reviews: 1 } }
->>>>>>> 6c981a34bdbe18466c8fb9a2178ca1014f81fdb5
         }
         else {
             return res.status(400).send({ status: false, msg: "Bad Request" })
@@ -96,35 +81,10 @@ const createReview = async function (req, res) {
 
 
 const updateReview = async function (req, res) {
-<<<<<<< HEAD
-    try{
-=======
-
->>>>>>> 6c981a34bdbe18466c8fb9a2178ca1014f81fdb5
     let reviewId = req.params.reviewId
     let data = req.body
     let { bookId, reviewedBy, reviewedAt, rating, review, isDeleted } = req.body
 
-<<<<<<< HEAD
-    //check the review Id is Valid or Not ?
-    if (!ObjectId.isValid(reviewId)) {
-        return res.status(400).send({ status: false, msg: "reviewId is Invalid" });
-    }
-
-    //check if the data in request body is present or not ?
-    if (!Object.keys(data).length) {
-        return res.status(400).send({ status: false, msg: "Noting to Update Request from Body" });
-    }
-
-    if (!ObjectId.isValid(bookId)) {
-        return res.status(400).send({ status: false, msg: "bookId must be valid" });
-    }
-
-    // check if id is present in Db or Not ? 
-    let books = await bookModel.findById(bookId)
-    if (!books) return res.status(404).send({ status: false, msg: "bookId is not match that you provide in url " })
-
-=======
     //check if the data in request body is present or not ?
     if (!Object.keys(data).length) {
         return res.status(400).send({ status: false, msg: "Please Enter the Data in Request Body" });
@@ -152,36 +112,17 @@ const updateReview = async function (req, res) {
         return res.status(400).send({ status: false, msg: "bookId is Invalid" });
     }
 
->>>>>>> 6c981a34bdbe18466c8fb9a2178ca1014f81fdb5
     //check if isDeleted is TRUE/FALSE ?
     if (isDeleted && (!(typeof isDeleted === "boolean"))) {
         return res.status(400).send({ status: false, msg: "isDeleted Must be TRUE OR FALSE" });
     }
-<<<<<<< HEAD
-=======
     //check if id is present in Db or Not ? 
     let findReview = await reviewModel.findById(reviewId)
     if (!findReview) return res.status(404).send({ status: false, msg: "bookId is not present in DB" })
->>>>>>> 6c981a34bdbe18466c8fb9a2178ca1014f81fdb5
 
     // check if isDeleated Status is True
     if (books.isDeleted) return res.status(404).send({ status: false, msg: "book is Already Deleted" })
 
-<<<<<<< HEAD
-    // if releasedAt  add the current Time&Date in releasedAt?
-    if (reviewedAt) {
-        data.reviewedAt = Date.now()
-    }
-
-    //check if id is present in Db or Not ? 
-    let findReview = await reviewModel.findById(reviewId)
-    if (!findReview) return res.status(404).send({ status: false, msg: "reviewId is not present in DB" })
-
-    var regEx = /^[a-zA-Z ]{2,100}$/
-    // check it is valid name or not? (using regular expression)
-    if (!regEx.test(reviewedBy)) {
-        return res.status(400).send({ status: false, msg: " name is invalid , name must be 2 digits " });
-=======
     //check if body is empty or not ?
     if (!Object.keys(data).length) {
         return res.status(400).send({ status: false, msg: "Noting to Update in Request from Body" });
@@ -191,7 +132,6 @@ const updateReview = async function (req, res) {
     // check it is valid name or not? (using regular expression)
     if (!regEx.test(reviewedBy)) {
         return res.status(400).send({ status: false, msg: "title text is invalid" });
->>>>>>> 6c981a34bdbe18466c8fb9a2178ca1014f81fdb5
     }
 
     // check rating between 1-5
@@ -207,12 +147,7 @@ const updateReview = async function (req, res) {
 
     return res.status(200).send({ status: true, data: updateReview });
 
-<<<<<<< HEAD
-}catch(err){
-    return res.status(500).send({status: false , msg: err.message})
 }
-}
-
 
 const deletedReview = async function (req, res) {
     try{
@@ -251,18 +186,12 @@ const deletedReview = async function (req, res) {
 }catch(err){
     return res.status(500).send({status:false,msg: err.message})
 }
-=======
->>>>>>> 6c981a34bdbe18466c8fb9a2178ca1014f81fdb5
 }
 
 
 
-<<<<<<< HEAD
-module.exports.createReview = createReview
-module.exports.updateReview = updateReview
-module.exports.deletedReview = deletedReview
-=======
+
 
 module.exports.createReview = createReview
 module.exports.updateReview = updateReview
->>>>>>> 6c981a34bdbe18466c8fb9a2178ca1014f81fdb5
+module.exports.deletedReview=deletedReview
