@@ -166,6 +166,9 @@ const updateBookById = async function (req, res) {
         if (!excerpt) {
             return res.status(400).send({ status: false, msg: "Please Enter the excerpt " });
         }
+        if (!ISBN) {
+            return res.status(400).send({ status: false, msg: "Please provide ISBN" });
+        }
         //check the book Id is Valid or Not ?  
         if (!ObjectId.isValid(bookId)) {
             return res.status(400).send({ status: false, msg: "bookId is Invalid" });
@@ -196,11 +199,6 @@ const updateBookById = async function (req, res) {
         if (findISBN) {
             return res.status(400).send({ status: false, msg: "ISBN is Already Present in DB" })
         }
-
-        if (!ISBN) {
-            return res.status(400).send({ status: false, msg: "Please provide ISBN" });
-        }
-
 
         // check if isDeleated Status is True
         if (books.isDeleted) return res.status(404).send({ status: false, msg: "book is Already Deleted" })
