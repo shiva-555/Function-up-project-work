@@ -96,41 +96,81 @@ const createUser = async function (req, res) {
 
 ///////////////////////////////////////////////////****CREATE LOGIN****///////////////////////////////////////////////
 
+// const createLogin = async function (req, res) {
+//     try {
+//         const data = req.body;
+//         if (!isValidBody(data)) {
+//             return res.status(400).send({ status: false, msg: "please provide email and password" });
+//         }
+
+//         let { email, password } = data;
+
+//         // if i remove the key email and password it give me the error 500 
+
+//         if (!data.email && !data.password) return res.status(400).send({ status: false, msg: "BAD REQUEST!" })
+//         if (!isValidBody(email)) {
+//             return res.status(400).send({ status: false, msg: "please provide email" });
+//         }
+//         if (!isValidBody(password)) {
+//             return res.status(400).send({ status: false, msg: "please provide password" });
+//         }
+
+
+//         const checkcredentials = await userModel.findOne({
+//             email: data.email,
+//             password: data.password,
+//         });
+//         if (!checkcredentials) {
+//             return res.status(400).send({ status: false, msg: "Invalid Login Data" });
+//         }
+//         if (checkcredentials.email === 0) {
+//             return res.status(400).send({ status: false, msg: "please provide with your email" });
+//         }
+//         let token = jwt.sign({ bookId: checkcredentials._id.toString() },
+//             "bookGroup72"
+//         )
+//         res.header("x-api-key", token);
+//         res.status(200).send({ status: true, token: token });
+
+//     } catch (err) {
+//         return res.status(500).send({ status: false, msg: err.message })
+//     }
+// };
+
 const createLogin = async function (req, res) {
     try {
-        const data = req.body;
-        if (!isValidBody(data)) {
-            return res.status(400).send({ status: false, msg: "please provide email and password" });
+         let { email, password } = req.body;
+        
+         //check if the data in request body is present or not ?
+        if (!Object.keys(req.body).length) {
+            return res.status(400).send({ status: false, msg: "Please Enter the email and password in Request Body" });
         }
 
-        let { email, password } = data;
-
-        // if i remove the key email and password it give me the error 500 
-
-        if (!data.email && !data.password) return res.status(400).send({ status: false, msg: "BAD REQUEST!" })
-        if (!isValidBody(email)) {
-            return res.status(400).send({ status: false, msg: "please provide email" });
-        }
-        if (!isValidBody(password)) {
-            return res.status(400).send({ status: false, msg: "please provide password" });
+        if (!email) {
+            return res.status(400).send({ status: false, msg: "Missing email" });
         }
 
+        //check if password is present or not
+        if (!password) {
+            return res.status(400).send({ status: false, msg: "PassWord is Required" });
+        }
 
-        const checkcredentials = await userModel.findOne({
-            email: data.email,
-            password: data.password,
-        });
-        if (!checkcredentials) {
-            return res.status(400).send({ status: false, msg: "Invalid Login Data" });
-        }
-        if (checkcredentials.email === 0) {
-            return res.status(400).send({ status: false, msg: "please provide with your email" });
-        }
-        let token = jwt.sign({ bookId: checkcredentials._id.toString() },
-            "bookGroup72"
-        )
-        res.header("x-api-key", token);
-        res.status(200).send({ status: true, token: token });
+        // find the object as per email & password
+        let user = await userModel.findOne({ email: email, password: password });
+
+        if (!user) return res.status(401).send({ status: false, msg: "email or password is not corerct", });
+
+        //create the Token 
+        let token = jwt.sign(
+            {
+                userId: user._id.toString(),
+                name: user.name 
+            },
+            "Group72"
+        );
+
+        res.setHeader("x-api-key", token);
+        res.status(201).send({ status: true, data: token });
 
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })

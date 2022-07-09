@@ -24,10 +24,7 @@ const createReview = async function (req, res) {
         if (!reviewedBy) {
             return res.status(400).send({ status: false, msg: "please provide reviewedBy  " })
         }
-        // check reviewedAt is present or not
-        // if (!reviewedAt) {
-        //     return res.status(400).send({ status: false, msg: "please provide reviewedAt  " })
-        // }
+        
         // check rating is present or not
         if (!rating) {
             return res.status(400).send({ status: false, msg: "please provide rating " })
@@ -55,7 +52,7 @@ const createReview = async function (req, res) {
         // }
 
         // check bookId valid or not
-        let findBook = await bookModel.findById(bookId).count()
+        let findBook = await bookModel.findById(bookId)
         if (!findBook) {
             return res.status(404).send({ status: false, message: "BookId Not Found" })
         }
