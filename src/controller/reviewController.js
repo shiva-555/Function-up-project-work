@@ -99,7 +99,7 @@ const updateReview = async function (req, res) {
 
     // check if id is present in Db or Not ? 
     let books = await bookModel.findById(bookId)
-    if (!books) return res.status(404).send({ status: false, msg: "bookId is not present in DB" })
+    if (!books) return res.status(404).send({ status: false, msg: "bookId is not match that you provide in url " })
 
     //check if isDeleted is TRUE/FALSE ?
     if (isDeleted && (!(typeof isDeleted === "boolean"))) {
@@ -152,10 +152,14 @@ const deletedReview = async function (req, res) {
     if (!ObjectId.isValid(reviewId)) {
         return res.status(400).send({ status: false, msg: "reviewId is Invalid" });
     }
+    let findReview= await reviewModel.findById(reviewId)
+    if (!findReview) {
+        return res.status(404).send({status:false , msg: 'review id not found '})
+    }
 
     //check the bookId is Valid or Not ?
     if (!ObjectId.isValid(bookId)) {
-        return res.status(400).send({ status: false, msg: "bookId is Invalid" });
+        return res.status(400).send({ status: false, msg: "url revewid is not match in db'" });
     }
 
     let review = await reviewModel.findById(reviewId)

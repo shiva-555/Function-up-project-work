@@ -30,7 +30,7 @@ const createBook = async function (req, res) {
         }
         //  check if category is present or not on body
         if (!category) {
-            return res.status(400).send({ status: false, msg: "Please Enter the ISBN" });
+            return res.status(400).send({ status: false, msg: "Please Enter the category" });
         }
         //  check if subcategory is present or not on body
         if (!subcategory) {
@@ -106,20 +106,20 @@ const createBook = async function (req, res) {
 
 
 const getBook = async function (req, res) {
-    let { title, excerpt, userId, category, releasedAt, reviews, ...rest } = req.query
+    let { userId, category, subcategory , ...rest } = req.query
 
 
     if (Object.keys(rest).length > 0) {
-        return res.status(400).send({ status: false, msg: "Please provide suggested key  ex :title, excerpt, userId, category, releasedAt, reviews," })
+        return res.status(400).send({ status: false, msg: "Please provide suggested key  ex : userId, category, sucategory" })
     }
 
     // check if any query param is present
     if (Object.keys(req.query).length !== 0) {
 
         // check if Id enquery is valid or not
-        if (!ObjectId.isValid(userId)) {
-            return res.status(400).send({ status: false, msg: "invalid user id in query params" })
-        }
+        // if (!ObjectId.isValid(userId)) {
+        //     return res.status(400).send({ status: false, msg: "invalid user id in query params" })
+        // }
         // add the key isDeleted in req.query
         req.query.isDeleted = false
 
@@ -130,7 +130,7 @@ const getBook = async function (req, res) {
         // check if data is found or not
         if (data.length != 0) return res.status(200).send({ status: true, data: data })
 
-        return res.status(404).send({ status: false, msg: "No dovument found as per filter key" })
+        return res.status(404).send({ status: false, msg: "No document found as per filter key" })
     }
 
     //  return the data if isDeleted false 

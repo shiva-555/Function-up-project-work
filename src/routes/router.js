@@ -11,16 +11,16 @@ const mw =require("../middleware/middlewareController")
 
 router.post("/register",userController.createUser)
 router.post("/login",userController.createLogin)
-router.post("/books", mw.authentication,mw.authentication, bookController.createBook)
+router.post("/books", mw.authentication,mw.authorization, bookController.createBook)
 router.get("/books", mw.authentication ,bookController.getBook)
 // router.get("/books/:bookId", bookController.getBookById)
 router.put("/books/:bookId",mw.authentication,mw.authorization, bookController.updateBookById)
-router.delete("/books/:bookId",mw.authentication, mw.authentication, bookController.deletedBook)
+router.delete("/books/:bookId",mw.authentication, mw.authorization, bookController.deletedBook)
 
 // ************REVIWS API*******************************
 
-router.post("/books/:bookId/review", reviewController.createReview)
-router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
-router.delete("/books/:bookId/review/:reviewId", reviewController.deletedReview)
+router.post("/books/:bookId/review",mw.authentication, reviewController.createReview)
+router.put("/books/:bookId/review/:reviewId", mw.authentication,mw.authorization,reviewController.updateReview)
+router.delete("/books/:bookId/review/:reviewId",mw.authentication, mw.authorization, reviewController.deletedReview)
 
 module.exports=router
