@@ -1,12 +1,13 @@
 const bookModel = require("../models/bookModel")
 const userModel = require("../models/userModel")
+const reviewModel = require("../models/reviewModel")
 const ObjectId = require('mongoose').Types.ObjectId;
 
 
 const createBook = async function (req, res) {
     try {
         let bookData = req.body
-        let { title, excerpt, userId, ISBN, category, subcategory, reviews, isDeleted, releasedAt } = req.body
+        let { title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt } = req.body
 
         //check if the data in request body is present or not ?
         if (!Object.keys(bookData).length) {
@@ -30,17 +31,13 @@ const createBook = async function (req, res) {
         }
         //  check if category is present or not on body
         if (!category) {
-            return res.status(400).send({ status: false, msg: "Please Enter the ISBN" });
+            return res.status(400).send({ status: false, msg: "Please Enter the category" });
         }
         //  check if subcategory is present or not on body
         if (!subcategory) {
             return res.status(400).send({ status: false, msg: "Please Enter the ISBN" });
         }
-        //  check if reviews is present or not on body
-        if (!reviews) {
-            return res.status(400).send({ status: false, msg: "Please Enter the reviews" });
-
-        }
+        
         //check if isDeleted is TRUE/FALSE ?
         if (isDeleted && (!(typeof isDeleted === "boolean"))) {
             return res.status(400).send({ status: false, msg: "isDeleted Must be TRUE OR FALSE" });
@@ -75,10 +72,8 @@ const createBook = async function (req, res) {
         let user = await userModel.findById(userId)
         if (!user) return res.status(404).send({ status: false, msg: "This Id is not present in user DB" })
 
-
-
         //check the author Id is Valid or Not ?
-        if (!ObjectId.isValid(userId)) {
+        if (ObjectId.isValid(userId)) {
             return res.status(400).send({ status: false, msg: "Id is Invalid" });
         }
 
@@ -106,42 +101,81 @@ const createBook = async function (req, res) {
 
 
 const getBook = async function (req, res) {
-    let { title, excerpt, userId, category, releasedAt, reviews, ...rest } = req.query
+    let { userId, category, subcategory, ...rest } = req.query
 
 
     if (Object.keys(rest).length > 0) {
-        return res.status(400).send({ status: false, msg: "Please provide suggested key  ex :title, excerpt, userId, category, releasedAt, reviews," })
+        return res.status(400).send({ status: false, msg: "Please provide suggested key  ex : userId, category, sucategory" })
     }
 
     // check if any query param is present
     if (Object.keys(req.query).length !== 0) {
 
-        // check if Id enquery is valid or not
-        if (!ObjectId.isValid(userId)) {
-            return res.status(400).send({ status: false, msg: "invalid user id in query params" })
+        if (userId && !ObjectId.isValid(userId)) {
+            return res.status(400).send({ status: false, msg: "UserId is Invalid" });
         }
-        // add the key isDeleted in req.query
+
+        if(userId && ObjectId.isValid(userId) == "") {
+            return res.status(400).send({ status: false, msg: "please provide user id" }); 
+        }
         req.query.isDeleted = false
 
         // find data as per para , query filter
         let data = await bookModel.find(req.query)
 
-
         // check if data is found or not
         if (data.length != 0) return res.status(200).send({ status: true, data: data })
 
-        return res.status(404).send({ status: false, msg: "No dovument found as per filter key" })
+        return res.status(404).send({ status: false, msg: "No document found as per filter key" })
     }
 
-    //  return the data if isDeleted false 
+    //  return the data if isDeleted false  //  sort here we use to sort the title in alphabetically
+    let data = await bookModel.find( req.query ).sort({ title: 1 }).select({createdAt:0 , updatedAt: 0  , __v :0})
 
-    let data = await bookModel.find({ isDeleted: false }).sort({ title: 1 }) //  sort here we use to sort the title in alphabetically
     if (data.length != 0) return res.status(200).send({ status: true, data: data })
 
     return res.status(404).send({ status: false, msg: " no document are found" })
 }
 
+// *************************GET BOOK BI ID************************
 
+const getBookById = async function (req, res) {
+    // let bookId = req.params.bookId;
+    
+    // let bookData = await bookModel.findById(bookId);
+    // if (!bookData) return res.status(400).send({status:false , msg:"no bookId found"})
+    // console.log(bookData)
+
+    // books_id = (bookData._id).toString()
+
+    // // let data = await bookModel.find({ bookId :bookId , isDeleted: false }) 
+    // // if (data.length != 0) return res.status(200).send({ status: true, data: data })
+
+    // let reviewsData = await reviewModel.find({ reviewid:bookId, isDeleted: false }).select("bookId reviewedBy reviewedAt rating review")
+    // if (reviewsData.length == 0) return res.status(404).send({ status: false, msg: " no reviewsData found" })
+    // return res.status(200).send({ status: true, data: bookData})
+
+    try {
+        let bookId = req.params.bookId
+        if (!ObjectId.isValid(bookId)) return res.status(400).send({ status: false, message: "Book Id is Invalid !!!!" })
+
+        booksData = await bookModel.findOne({ _id: bookId, isDeleted: false }).lean()
+        if (!booksData) return res.status(404).send({ status: false, message: "No Books Found As per BookID" })
+
+        reviewsData = await reviewModel.find({ bookId: bookId, isDeleted: false })
+        if (!reviewsData) return res.status(404).send({ status: false, message: "No Reviews Found As per BookID" })
+        booksData.reviewsData = reviewsData
+        return res.status(200).send({ status: true, message: 'Books list', data: booksData })
+
+    } catch (err) {
+        return res.status(500).send({ status: false, message: err.message });
+    }
+}
+
+
+
+
+ 
 // ******************************************UPDATE BOOK***********************************************
 
 
@@ -150,8 +184,6 @@ const updateBookById = async function (req, res) {
         let bookId = req.params.bookId
         let data = req.body
         let { title, excerpt, userId, ISBN, category, subcategory, reviews, deletedAt, isDeleted, releasedAt } = req.body
-
-
 
         //check if the data in request body is present or not ?
         if (!Object.keys(data).length) {
@@ -270,5 +302,6 @@ const deletedBook = async function (req, res) {
 
 module.exports.createBook = createBook
 module.exports.getBook = getBook
+module.exports.getBookById = getBookById
 module.exports.updateBookById = updateBookById
 module.exports.deletedBook = deletedBook
