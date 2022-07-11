@@ -19,6 +19,7 @@ const createUser = async function (req, res) {
         userData = req.body
         let { title, name, phone, email, password, address, ...rest } = userData
 
+<<<<<<< HEAD
         // let findreg = req.params.register
         // if(!findreg) return res.status(400).send({ status: false, msg: "please provide userdetails" })
         // in case of invalid request params should send 400 status code and proper error message (POST /register ) ???????????????????????
@@ -42,6 +43,33 @@ const createUser = async function (req, res) {
         if (!email) return res.status(400).send({ status: false, msg: " email missing" })
         if (!password) return res.status(400).send({ status: false, msg: " password missing" })
             
+=======
+        // check if the data in req.body is present or not
+        if (!Object.keys(userData).length) {
+            return res.status(400).send({ status: false, msg: "please provide userdetails" })
+        }
+        // check if any unwanted attribute in req body is present or not ?
+        if (Object.keys(rest).length > 0) {
+            return res.status(400).send({ status: false, msg: " please enter the valid attribute field" })
+        }
+        // check if title,name,phone,email,password is present or not
+        if (!title) {
+            return res.status(400).send({ status: false, msg: " title missing" })
+        }
+        if (!name) {
+            return res.status(400).send({ status: false, msg: " name missing" })
+        }
+        if (!phone) {
+            return res.status(400).send({ status: false, msg: " phone missing" })
+        }
+        if (!email) {
+            return res.status(400).send({ status: false, msg: " email missing" })
+        }
+        if (!password) {
+            return res.status(400).send({ status: false, msg: " password missing" })
+        }
+
+>>>>>>> 15344aa6c07cd047f81b0fe1a1de0a2b27953f23
         // check  title pattern is valid or not? (using regular expression)
         var regEx = /^[a-zA-Z]+/;
         if (!regEx.test(title)) {
@@ -53,6 +81,7 @@ const createUser = async function (req, res) {
         }
         // check name is valid name or not?  (for this we used regular expression is here) 
         var nameRegex = /^[a-zA-Z ]{2,100}$/
+<<<<<<< HEAD
 
         if (!nameRegex.test(name)) {
             return res.status(400).send({ status: false, msg: "name shold be more then 1 character " });
@@ -89,6 +118,42 @@ const createUser = async function (req, res) {
         return res.status(201).send({ status: true, msg: "succesfully created", data: data })
 
         
+=======
+
+        if (!nameRegex.test(name)) {
+            return res.status(400).send({ status: false, msg: "name shold be more then 1 character " });
+        }
+        // check mobile no valid or not
+        if (!isValid(phone)) return res.status(400).send({ status: false, message: "users's phone no is required." })
+
+        // check mobile pattern
+        var mobileRegex = /^[0]?[6789]\d{9}$/
+        if (!mobileRegex.test(phone)) {
+            return res.status(400).send({ status: false, message: "Please provide a valid mobile number, it should start 6-9.(you can also use STD code 0)" })
+        }
+        // check mobile no present in database or not
+        let usedMobile = await userModel.findOne({ phone })
+        if (usedMobile) {
+            return res.status(400).send({ status: false, message: "Mobile no already exists. Please provide another mobile number" })
+        }
+        //check if email id is valid or not ?  --->used "email-validator"
+        if (!(validator.validate(email))) {
+            return res.status(400).send({ status: false, msg: "Email Id is Invalid" });
+        }
+        //check the email present in database or not 
+        let emailFlag = await userModel.findOne({ email: email })
+        if (emailFlag) {
+            return res.status(400).send({ status: false, msg: "E-mail is Already Present in DB" })
+        }
+        //check if password is valid or not ?
+        var passwordReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
+        if (!passwordReg.test(password)) {
+            return res.status(400).send({ status: false, msg: "pass is invalid(Minimum 8 and maximum 15 characters, at least one uppercase letter, one lowercase letter, one number and one special character Ex. Abc@123,abC%98,@abD34,1999$Sour" });
+        }
+        // if all condition are passed create user data
+        let data = await userModel.create(userData)
+        return res.status(201).send({ status: true, msg: "succesfully created", data: data })
+>>>>>>> 15344aa6c07cd047f81b0fe1a1de0a2b27953f23
     } catch (error) {
         return res.status(500).send({ status: false, msg: error.message })
     }
@@ -169,10 +234,14 @@ const createLogin = async function (req, res) {
         let token = jwt.sign(
             {
                 userId: user._id.toString(),
+<<<<<<< HEAD
                 name: user.name,
                 exp: Math.floor(Date.now()/1000) + 10*60*60,
                 iat:new Date().getTime()/1000
 
+=======
+                name: user.name
+>>>>>>> 15344aa6c07cd047f81b0fe1a1de0a2b27953f23
             },
             "Group72"
         );

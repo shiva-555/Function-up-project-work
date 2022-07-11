@@ -44,7 +44,7 @@ authorization = async function (req, res, next) {
         } catch (err) {
             return res.status(400).send({ status: false, msg: err.message + " Please enter valid token in header body" })
         }
- 
+
 
         // execute if req.body will contain userId (When new Book is Created)
         if (req.body.userId) {
@@ -81,27 +81,28 @@ authorization = async function (req, res, next) {
             }
             return next()
         }
-    
+
         //if no user Id is not Found from client Api ,Side
         else {
             return res.status(400).send({ status: false, mg: " user id Must be Present ......." })
         }
 
-        if (req.query.bookId) {
-            if (decodedToken.userId != (req.query.bookId)) {
-                return res.status(400).send({ status: false, msg: "token auth id and req.body id is not matched" })
-            }
-            return next()
-        }
-    
+        // if (req.query.bookId) {
+        //     if (decodedToken.userId != (req.query.bookId)) {
+        //         return res.status(400).send({ status: false, msg: "token auth id and req.body id is not matched" })
+        //     }
+        //     return next()
+        // }
 
 
-    }catch(err){
-        return res.status(500).send({status:false,msg :err.message})
+
+    } catch (err) {
+        return res.status(500).send({ status: false, msg: err.message })
     }
-    }
+}
+
 
 
 
 module.exports.authentication = authentication
-    module.exports.authorization = authorization
+module.exports.authorization = authorization

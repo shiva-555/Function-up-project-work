@@ -101,7 +101,7 @@ const createBook = async function (req, res) {
 
 
 const getBook = async function (req, res) {
-    let { userId, category, subcategory, ...rest } = req.query
+    let { userId, category, subcategory , ...rest } = req.query
 
 
     if (Object.keys(rest).length > 0) {
@@ -111,13 +111,11 @@ const getBook = async function (req, res) {
     // check if any query param is present
     if (Object.keys(req.query).length !== 0) {
 
-        if (userId && !ObjectId.isValid(userId)) {
-            return res.status(400).send({ status: false, msg: "UserId is Invalid" });
-        }
-
-        if(userId && ObjectId.isValid(userId) == "") {
-            return res.status(400).send({ status: false, msg: "please provide user id" }); 
-        }
+        // check if Id enquery is valid or not
+        // if (!ObjectId.isValid(userId)) {
+        //     return res.status(400).send({ status: false, msg: "invalid user id in query params" })
+        // }
+        // add the key isDeleted in req.query
         req.query.isDeleted = false
 
         // find data as per para , query filter
@@ -139,43 +137,31 @@ const getBook = async function (req, res) {
 
 // *************************GET BOOK BI ID************************
 
+
+/*********************************************[GET BOOK BY ID IN PATH PARAM]*****************************************************/
 const getBookById = async function (req, res) {
-    // let bookId = req.params.bookId;
-    
-    // let bookData = await bookModel.findById(bookId);
-    // if (!bookData) return res.status(400).send({status:false , msg:"no bookId found"})
-    // console.log(bookData)
-
-    // books_id = (bookData._id).toString()
-
-    // // let data = await bookModel.find({ bookId :bookId , isDeleted: false }) 
-    // // if (data.length != 0) return res.status(200).send({ status: true, data: data })
-
-    // let reviewsData = await reviewModel.find({ reviewid:bookId, isDeleted: false }).select("bookId reviewedBy reviewedAt rating review")
-    // if (reviewsData.length == 0) return res.status(404).send({ status: false, msg: " no reviewsData found" })
-    // return res.status(200).send({ status: true, data: bookData})
-
     try {
-        let bookId = req.params.bookId
-        if (!ObjectId.isValid(bookId)) return res.status(400).send({ status: false, message: "Book Id is Invalid !!!!" })
 
-        booksData = await bookModel.findOne({ _id: bookId, isDeleted: false }).lean()
-        if (!booksData) return res.status(404).send({ status: false, message: "No Books Found As per BookID" })
+        let book_id = req.params.bookId
 
-        reviewsData = await reviewModel.find({ bookId: bookId, isDeleted: false })
-        if (!reviewsData) return res.status(404).send({ status: false, message: "No Reviews Found As per BookID" })
-        booksData.reviewsData = reviewsData
-        return res.status(200).send({ status: true, message: 'Books list', data: booksData })
+        if (!isValidObjectId(book_id)) return res.status(400).send({ status: false, message: "Invalid bookId." })
+
+        let checkBook = await bookModel.findOne({ _id:book_id, isDeleted: false })
+
+        if (!checkBook) return res.status(400).send({ status: false, message: "BookId Not Found" })
+
+        const getReviewsData = await reviewModel.find({ bookId: checkBook._id, isDeleted: false })
+            .select({ deletedAt: 0, isDeleted: 0, createdAt: 0, __v: 0, updatedAt: 0 })
+
+        checkBook.reviewsData = getReviewsData
+
+        res.status(200).send({ status: true, message: "Book List", data: checkBook })
 
     } catch (err) {
-        return res.status(500).send({ status: false, message: err.message });
+        res.status(500).send({ status: false, error: err.message })
     }
 }
 
-
-
-
- 
 // ******************************************UPDATE BOOK***********************************************
 
 
@@ -302,6 +288,6 @@ const deletedBook = async function (req, res) {
 
 module.exports.createBook = createBook
 module.exports.getBook = getBook
-module.exports.getBookById = getBookById
+module.exports.getBookById=getBookById
 module.exports.updateBookById = updateBookById
 module.exports.deletedBook = deletedBook
