@@ -35,17 +35,14 @@ const bookSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    // password: {
-    //   type: String,
-    //   trim: true,
-    //   required: true,
-    // },
+    
     reviews: {
       type: Number,
       trim: true,
       default: 0
     },
     deletedAt: {
+      default: null, 
       type: Date
     },
     isDeleted: {

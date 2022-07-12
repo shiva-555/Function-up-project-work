@@ -86,15 +86,7 @@ authorization = async function (req, res, next) {
         else {
             return res.status(400).send({ status: false, mg: " user id Must be Present ......." })
         }
-
-        // if (req.query.bookId) {
-        //     if (decodedToken.userId != (req.query.bookId)) {
-        //         return res.status(400).send({ status: false, msg: "token auth id and req.body id is not matched" })
-        //     }
-        //     return next()
-        // }
-
-
+        
     } catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
     }

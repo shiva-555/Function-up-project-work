@@ -19,14 +19,6 @@ const createUser = async function (req, res) {
         userData = req.body
         let { title, name, phone, email, password, address, ...rest } = userData
 
-        // let findreg = req.params.register
-        // if(!findreg) return res.status(400).send({ status: false, msg: "please provide userdetails" })
-        // in case of invalid request params should send 400 status code and proper error message (POST /register ) ???????????????????????
-
-        let register = req.params.register
-        if (!isValid(register)) return res.status(400).send({ status: false, message: "register is not valid." })
-
-
         // check if the data in req.body is present or not
         if (!Object.keys(userData).length) {
             return res.status(400).send({ status: false, msg: "please provide userdetails" })
@@ -88,7 +80,6 @@ const createUser = async function (req, res) {
         let data = await userModel.create(userData)
         return res.status(201).send({ status: true, msg: "succesfully created", data: data })
 
-        
     } catch (error) {
         return res.status(500).send({ status: false, msg: error.message })
     }
@@ -104,15 +95,8 @@ const createLogin = async function (req, res) {
         if (!Object.keys(req.body).length) {
             return res.status(400).send({ status: false, msg: "Please Enter the email and password in Request Body" });
         }
-
-        if (!email) {
-            return res.status(400).send({ status: false, msg: "Missing email" });
-        }
-
-        //check if password is present or not
-        if (!password) {
-            return res.status(400).send({ status: false, msg: "PassWord is Required" });
-        }
+        if (!email)  return res.status(400).send({ status: false, msg: "Missing email" });   
+        if (!password) return res.status(400).send({ status: false, msg: "PassWord is Required" });
 
         //check if email id is valid or not ?  --->used "email-validator"
         if (!(validator.validate(email))) {
@@ -129,11 +113,9 @@ const createLogin = async function (req, res) {
             {
                 userId: user._id.toString(),
                 name: user.name,
-                exp: Math.floor(Date.now()/1000) + 10*60*60,
-                iat:new Date().getTime()/1000
-
             },
-            "Group72"
+            "Group72",
+            {expiresIn :"10d"}
         );
 
         res.setHeader("x-api-key", token);
