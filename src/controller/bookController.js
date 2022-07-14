@@ -13,7 +13,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const createBook = async function (req, res) {
     try {
         let bookData = req.body
-        let { title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt, deletedAt } = req.body
+        let {BookCover,title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt, deletedAt } = req.body
 
         //check if the data in request body is present or not ?
         if (!Object.keys(bookData).length) {
@@ -21,6 +21,7 @@ const createBook = async function (req, res) {
         }
 
         if (!title) return res.status(400).send({ status: false, msg: "Please Enter the Title" });
+        if (!BookCover) return res.status(400).send({ status: false, msg: "Please Enter the BookCover" });
         if (!excerpt) return res.status(400).send({ status: false, msg: "Please Enter the excerpt" });
         if (!userId) return res.status(400).send({ status: false, msg: "Please Enter the userId" });
         if (!ISBN) return res.status(400).send({ status: false, msg: "Please Enter the ISBN" });
@@ -254,3 +255,4 @@ module.exports.getBook = getBook
 module.exports.getBookById = getBookById
 module.exports.updateBookById = updateBookById
 module.exports.deletedBook = deletedBook
+
